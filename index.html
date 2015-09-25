@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Анализ производительности Java приложений</title>
+
+		<meta name="description" content="Presentation about java applications performance">
+		<meta name="author" content="Denis V. Kirpichenkov">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+
+		<link rel="stylesheet" href="css/hljs/vs.css" id="highlight-theme">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+		<style>
+.reveal .slide-number {
+	font-size:22pt;
+	color:black;
+}
+
+.reveal pre {
+	background: none;
+	border: none;
+	box-shadow: none;	
+}
+
+.reveal pre code{
+	color: black;
+	background: none;
+	box-shadow: none;
+}
+
+.reveal section img {
+	border: none;
+	box-shadow: none;
+}
+
+.reveal pre code {
+	overflow: hidden;
+}
+
+.blinking-cursor {
+  font-weight: 100;
+  font-size: 30px;
+  color: #2E3D48;
+  width:10px;
+  background-color:black;
+  -webkit-animation: 1s blink step-end infinite;
+  -moz-animation: 1s blink step-end infinite;
+  -ms-animation: 1s blink step-end infinite;
+  -o-animation: 1s blink step-end infinite;
+  animation: 1s blink step-end infinite;
+}
+
+@keyframes "blink" {
+  from, to {
+    background-color:white;
+    color: transparent;
+  }
+  50% {
+    color: black;
+    background-color:black;
+  }
+}
+
+@-moz-keyframes blink {
+  from, to {
+    background-color:white;
+    color: transparent;
+  }
+  50% {
+    color: black;
+    background-color:black;
+  }
+}
+
+@-webkit-keyframes "blink" {
+  from, to {
+    background-color:white;
+    color: transparent;
+  }
+  50% {
+    color: black;
+    background-color:black;
+  }
+}
+
+@-ms-keyframes "blink" {
+  from, to {
+    background-color:white;
+    color: transparent;
+  }
+  50% {
+    color: black;
+    background-color:black;
+  }
+}
+
+@-o-keyframes "blink" {
+  from, to {
+    background-color:white;
+    color: transparent;
+  }
+  50% {
+    color: black;
+    background-color:black;
+  }
+}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Java apps per4mance breakdown</h1>
+					<p>
+						<small>
+						<a href="http://focus-it.ru">Кирпиченков Денис</a> / <a href="http://twitter.com/dkirpichenkov">@dkirpichenkov</a>/ <a href="mailto:d0k1@mail.ru">d0k1@mail.ru</a>
+						<br/>
+						<br/>
+						<a href="https://d0k1.github.io/jug.sev.perf">d0k1.github.io/jug.sev.perf</a>
+						</small>
+					</p>
+				</section>
+				<section>
+					<h2>Java приложения работают медленно</h2>
+					<img style="vertical-align:middle; border:none" src="img/java_hangs.png" />
+				</section>
+				
+				<section>
+					<h2>Java приложения работают медленно</h2>
+					<img style="vertical-align:middle; border:none" src="img/java_hangs2.png" />
+				</section>
+				
+				<section>
+					<h2>Metrics</h2>
+					<ul>
+						<li>Elapsed Time</li>
+						<li>Throughput</li>
+						<li>Response time</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>The most important metric</h2>
+					<img style="vertical-align:middle; border:none" src="img/ie_hangs.jpg">
+				</section>
+
+				<section>
+					<h2>Get code as far from me as possible</h2>
+					<img style="vertical-align:middle; border:none" src="img/virt.png">
+				</section>
+
+				<section>
+					<h2>OS Level</h2>
+					<ul>
+						<li>CPU</li>
+						<li>Memory</li>
+						<li>Disks</li>
+						<li>Network</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>OS Level</h2>
+					<h3>CPU / Memory - top</h3>
+					<img style="vertical-align:middle; border:none" src="img/top1.png">
+				</section>
+
+				<section>
+					<h2>OS Level</h2>
+					<h3>CPU / Memory - top</h3>
+<pre><code class="bash">
+		load average: 0,18, 0,21, 0,22
+				1m   5m    15m
+</code></pre>
+				</section>
+
+				<section>
+					<h2>OS Level</h2>
+					<h3>CPU / Memory - top</h3>
+<pre style="width:auto;"><code>
+KiB Mem:   8053744 total,  7828364 used,   225380 free,    19448 buffers
+KiB Swap:  9765884 total,   869032 used,  8896852 free.   943112 cached Mem
+</code></pre>
+				</section>
+				<section>
+					<h2>OS Level</h2>
+					<h3>Disks - iostat</h3>
+<pre style="width:1400px;left:-190px;font-size:14pt;">
+$ iostat -xm
+
+Linux 3.16.0-50-generic (laptop) 	25.09.2015 	_x86_64_	(4 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+          18,78    0,39    4,87    0,50    0,00   75,45
+
+Device:         rrqm/s   wrqm/s     r/s     w/s    rMB/s    wMB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
+sda               0,69     3,55    5,74    1,81     0,09     0,06    40,75     0,11   14,64    9,12   32,18   1,30   0,98
+
+</pre>
+					<!-- <img style="vertical-align:middle; border:none" src="img/iostat.png"> -->
+				</section>
+
+				<section>
+					<h2>OS Level</h2>
+					<h3>Network - nicstat</h3>
+<pre style="width:1100px;">
+$ nicstat -a
+
+01:59:03    InKB   OutKB   InSeg  OutSeg Reset  AttF %ReTX InConn OutCon Drops
+TCP         0.00    0.00    4.17    3.32  0.03  0.02 0.000   0.01   0.06  0.00
+01:59:03                    InDG   OutDG     InErr  OutErr
+UDP                         3.67    3.59      0.00    0.00
+01:59:03      RdKB    WrKB   RdPkt   WrPkt   IErr  OErr  Coll  NoCP Defer  %Util
+wlan0         4.34    1.21    4.24    3.01   0.00  0.00  0.00  0.00  0.00   0.00
+lo            0.31    0.31    0.56    0.56   0.00  0.00  0.00  0.00  0.00   0.00
+tun0          1.11    0.67    1.33    1.20   0.00  0.00  0.00  0.00  0.00   0.15
+</pre>
+					<!-- <img style="vertical-align:middle; border:none" src="img/nicstat.png"> -->
+				</section>
+
+				<section>
+					<h2>OS Level</h2>
+					<ul>
+						<li>CPU - top</li>
+						<li>Memory - top</li>
+						<li>Disks - iostat</li>
+						<li>Network - nicstat</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>JVM Level</h2>
+					<ul>
+						<li>jstack</li>
+						<li>jstat</li>
+						<li>jcmd</li>
+						<li>jmap</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>JVM Level</h2>
+					<h3>jstack</h3>
+					<a style="font-size:24pt" href="http://hg.openjdk.java.net/jdk8u/jdk8u-dev/jdk/file/7d1d5f4d019a/src/share/classes/sun/tools/jstack/JStack.java">jdk8u-dev/jdk/src/share/classes/sun/tools/jstack/JStack.java</a>
+					<!-- <img style="vertical-align:middle; border:none" src="img/jstack.png"> -->
+<pre style="width:1120px;">
+Full thread dump Java HotSpot(TM) 64-Bit Server VM (24.72-b04 mixed mode):
+"Thread-1" daemon prio=6 tid=0x00000000629f1000 nid=0x1994 runnable [0x000000006d4ea000]
+   java.lang.Thread.State: RUNNABLE
+        at java.net.SocketInputStream.socketRead0(Native Method)
+        at java.net.SocketInputStream.read(SocketInputStream.java:152)
+        at java.net.SocketInputStream.read(SocketInputStream.java:122)
+        at com.microsoft.sqlserver.jdbc.TDSChannel.read(IOBuffer.java:1782)
+        at com.microsoft.sqlserver.jdbc.TDSReader.readPacket(IOBuffer.java:4838)
+        - locked <0x00000006db7d1228> (a com.microsoft.sqlserver.jdbc.TDSReader)
+        at com.microsoft.sqlserver.jdbc.TDSCommand.startResponse(IOBuffer.java:6154)
+        at com.microsoft.sqlserver.jdbc.TDSCommand.startResponse(IOBuffer.java:6106)
+</pre>					
+				</section>
+
+				<section>
+					<h2>JVM Level</h2>
+					<h3>jstat</h3>
+					<a style="font-size:24pt" href="http://hg.openjdk.java.net/jdk8u/jdk8u-dev/jdk/file/7d1d5f4d019a/src/share/classes/sun/tools/jstat/Jstat.java">jdk8u-dev/jdk/src/share/classes/sun/tools/jstat/Jstat.java</a>
+					<!-- <img style="vertical-align:middle; border:none" src="img/jstat.png"> -->
+<pre style="width:1500px;left:-200px;">
+$ jstat -gccause 24342            
+
+  S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT    LGCC                 GCC                 
+  2.11   0.00  71.83  31.13  97.80  96.51     22    0.696    10    1.846    2.542 GCLocker Initiated GC No GC               
+</pre>
+				</section>
+
+				<section>
+					<h2>JVM Level</h2>
+					<h3>jcmd</h3>
+					<a style="font-size:24pt" href="http://hg.openjdk.java.net/jdk8u/jdk8u-dev/jdk/file/7d1d5f4d019a/src/share/classes/sun/tools/jcmd/JCmd.java">jdk8u-dev/jdk/src/share/classes/sun/tools/jcmd/JCmd.java</a>
+					<br/>
+					<br/>
+					<ul>
+						<li>jcmd PID PerfCounter.print</li>
+						<li>jcmd PID GC.class_histogram</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>JVM Level</h2>
+					<h3>jmap</h3>
+					<a style="font-size:24pt" href="http://hg.openjdk.java.net/jdk8u/jdk8u-dev/jdk/file/7d1d5f4d019a/src/share/classes/sun/tools/jmap/JMap.java">jdk8u-dev/jdk/src/share/classes/sun/tools/jmap/JMap.java</a>
+					<img style="vertical-align:middle; border:none; max-height:250px;" src="img/oome20.png">
+					<pre><code data-trim class="bash">$ jmap -F -dump:format=b,file=/tmp/dump.hprof 25914</code></pre>
+				</section>
+				<section>
+					<h2>Measure ⇒ Fix ⇒ Measure</h2>
+					<ul>
+					<li class="fragment" style="list-style-type: none;">
+<pre style="width:auto;"><code data-trim class="java">boolean clientSatisfied=false;
+while(!clientSatisfied)
+{
+	// Find a bottleneck
+	profileIt();
+	// Make necessary and sufficient changes
+	fixIt();
+	// Prove that you've fixed the problem
+	profileIt();
+
+	clientSatisfied = testInProduction();
+}
+</code></pre>
+					</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Software bounds</h2>
+					<ul>
+						<li>CPU: cache, algorithm</li>
+						<li>Memory: leaks, algorithm</li>
+						<li>IO: cache, batch</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Mission (under) Control</h2>
+					<ul>
+						<li>
+<pre><code data-trim class="bash">$ java -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -version</code></pre>
+						</li>
+						<li>
+<pre><code data-trim class="bash">$ jcmd 5368 JFR.start filename=myrecording.jfr</code></pre>
+						</li>
+						<li>
+<pre><code data-trim class="bash">$ jcmd 5368 JFR.stop</code></pre>
+						</li>
+						<li>
+<pre><code data-trim class="bash">$ jcmd 5368 JFR.dump</code></pre>
+						</li>
+						<li>
+<pre><code data-trim class="bash">$ jmc</code></pre>
+						</li>
+					</ul>
+
+				</section>
+
+				<section>
+					<h2>Mission (under) Control</h2>
+					<img src="img/jmc1.png">
+				</section>
+
+				<section>
+					<h2>Mission (under) Control</h2>
+					<img src="img/jmc2.png">
+				</section>
+
+				<section>
+					<h2>Mission (under) Control</h2>
+					<img src="img/jmc3.png">
+				</section>
+
+				<section>
+					<h2>Mission (under) Control</h2>
+					<img src="img/jmc4.png">
+				</section>
+
+				<section>
+					<h2>Mission (under) Control</h2>
+					<img src="img/jmc5.png">
+				</section>
+
+				<section>
+					<h2>Mission (under) Control</h2>
+					<img src="img/jmc6.png">
+				</section>
+
+				<section>
+					<h2>Mission (under) Control</h2>
+					<img src="img/jmc7.png">
+				</section>
+
+				<section>
+					<h2>Mission (under) Control</h2>
+					<img src="img/jmc8.png">
+				</section>
+
+				<section>
+					<h2>Mission (under) Control</h2>
+					<img src="img/jmc10.png">
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<img style="height:500px;" src="img/java_profiler.png" />
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Instrumenting profiler</h3>
+					<img style="vertical-align:middle; border:none; max-height: 500px;" src="img/instrumenting_profiler.png"/>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Instrumenting profiler Cont.</h3>
+					<img style="vertical-align:middle; border:none; max-height: 500px;" src="img/proxy_profiler.png"/>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Sampling profiler</h3>
+					<img style="vertical-align:middle; border:none; max-height: 500px;" src="img/sampling_profiler.png"/>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Native profiler</h3>
+					<img style="vertical-align:middle; border:none; max-height: 480px;" src="img/native_profiler.png"/>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>DIY</h3>
+<pre><code>
+#!/bin/bash
+pids=`$JAVA_HOME/bin/jps | grep -v Jps | awk '{print $1}'`
+for pid in $pids; do
+user=`ps -eo user,pid| grep $pid | awk '{print $1}'`
+date=`date '+%Y%m%d-%H:%M:%S'`
+su - $user -c "$JAVA_HOME/bin/jstack $pid" > jstack.$pid.$date
+done
+</code></pre>
+<pre><code>
+ps -e -Topcpu,pid,tid,rss,args=| grep java| grep -v grep |sort -nrk1
+</code></pre>
+<pre><code>
+pids='30260 30261' # найденные на предыдущем шаге идентификаторы
+nids=`for i in $tids; do echo "obase=16; $i" | bc | tr '[:upper:]' '[:lower:]'; done`
+echo $nids
+</code></pre>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>DIY</h3>
+					<ul>
+						<li><a href="https://docs.oracle.com/javase/6/docs/api/java/lang/instrument/Instrumentation.html">java.lang.instrument.Instrumentation</a></li>
+						<li><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jvmti/">Java Virtual Machine Tool Interface (JVM TI)</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Netbeans</h3>
+					<img style="max-width:1400px;left:-200px;position: relative;" src="img/nbp5.png" />
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Oracle Solaris Studio</h3>
+<pre style="width:1000px;"><code class="bash">
+$ collect -d /tmp/oss -p high -S on -h on -i on -s all -y SIGPROF java -version
+</code></pre>
+<pre style="width:1000px;"><code class="bash">
+$ analyzer /tmp/oss/test.1.er [/tmp/oss/test.2.er]
+</code></pre>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Oracle Solaris Studio</h3>
+					<img src="img/oss1.png"/>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Oracle Solaris Studio</h3>
+					<img src="img/oss3.png"/>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Oracle Solaris Studio</h3>
+					<img src="img/oss4.png"/>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Oracle Solaris Studio</h3>
+					<img src="img/oss5.png"/>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Oracle Solaris Studio</h3>
+					<img style="height:800px;" src="img/oss6.png"/>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>Oracle Solaris Studio</h3>
+					<img style="max-width:1400px;left:-200px;position: relative;" src="img/oss7.png"/>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>DIY examples</h3>
+					<h4>JVMTI examples</h4>
+					<a href="http://hg.openjdk.java.net/jdk8u/jdk8u-dev/jdk/file/7d1d5f4d019a/src/share/demo/jvmti">jdk/src/share/demo/jvmti</a>
+					<br/>
+					<ul>
+						<li>mtrace</li>
+						<li>heapTracker</li>
+					</ul>
+					<br/>
+					<a href="https://github.com/devexperts/aprof">github.com/devexperts/aprof</a>
+				</section>
+
+				<section>
+					<h2>Profilers</h2>
+					<h3>DIY examples</h3>
+					<h4>(the very) honest profiler</h4>
+					<a href="https://github.com/RichardWarburton/honest-profiler">github.com/RichardWarburton/honest-profiler</a>
+				</section>
+
+				<section>
+					<h2>Benchmarks</h2>
+					<img style="vertical-align:middle; border:none" src="img/benchmark.png"/>
+				</section>
+
+				<section>
+					<h2>JMH</h2>
+					http://openjdk.java.net/projects/code-tools/jmh/
+					<br/>
+					<a href="http://java-performance.info/introduction-jmh-profilers/">http://java-performance.info/introduction-jmh-profilers</a>
+<pre style="font-size:12pt"><code data-trim class="java">	
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.MICROSECONDS)
+@Warmup(iterations = 3, time = 1, timeUnit = TimeUnit.SECONDS )
+@Measurement(iterations = 7, time = 3, timeUnit = TimeUnit.SECONDS)
+@Threads( 2 )
+@State(Scope.Thread)
+public class ThreadDumpTest {
+    @Group("jdk")
+    @GroupThreads(1)
+    @Benchmark
+    public Map<Thread, StackTraceElement[]> testCoreWay() throws InterruptedException {
+        Thread.sleep( SLEEP );
+        return Thread.getAllStackTraces();
+    }
+    public static void main(String[] args) throws RunnerException {
+        Options opt = new OptionsBuilder()
+                .include(".*" + ThreadDumpTest.class.getSimpleName() + ".*")
+                .forks(1)
+                .build();
+        new Runner(opt).run();
+    }
+}
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h2>JMeter</h2>
+					<a href="http://jmeter.apache.org/">http://jmeter.apache.org/</a>
+					<br/>
+					<img style="width:1500px;vertical-align:middle; border:none" src="img/jmeter0.png"/>
+				</section>
+
+				<section>
+					<h2>JMeter</h2>
+						<img style="width:1500px;vertical-align:middle; border:none" src="img/jmeter1.png"/>
+				</section>
+
+				<section>
+					<h2>JMeter</h2>
+						<img style="width:1500px;vertical-align:middle; border:none" src="img/jmeter2.png"/>
+				</section>
+
+				<section>
+					<h2>Become better</h2>
+					<h3>Log</h3>
+<pre style="width:1250px;left:-150px;">
+[http-apr-80-exec-6 192.168.224.69 naumen] (07 окт 2013 00:01:21,407) INFO  dispatch.Dispatch - GetDtObjectListAction [getPermissions()=null, ... ]
+</pre>
+<pre style="width:1250px;left:-150px;top:50px">
+[http-nio-10063-exec-1 192.168.224.69 naumen] (22 сен 2015 00:02:21,407) INFO  dispatch.Dispatch - GetMetainfoVersionAction []
+[http-nio-10063-exec-1 192.168.224.69 naumen] (22 сен 2015 00:02:21,530) INFO  dispatch.Dispatch - Done(123):GetMetainfoVersionAction []
+</pre>
+				</section>
+
+				<section>
+					<h2>Become better</h2>
+					<h3>Improved jstack</h3>
+<pre style="font-size:small; width:1200px;">
+Full thread dump Java HotSpot(TM) 64-Bit Server VM (24.72-b04 mixed mode):
+"http-apr-8080-exec-296 192.168.224.69 naumen GetMetainfoVersionAction" daemon prio=6 tid=0x00000000629f1000 nid=0x1994 runnable [0x000000006d4ea000]
+   java.lang.Thread.State: RUNNABLE
+        at java.net.SocketInputStream.socketRead0(Native Method)
+        at java.net.SocketInputStream.read(SocketInputStream.java:152)
+        at java.net.SocketInputStream.read(SocketInputStream.java:122)
+        at com.microsoft.sqlserver.jdbc.TDSChannel.read(IOBuffer.java:1782)
+        at com.microsoft.sqlserver.jdbc.TDSReader.readPacket(IOBuffer.java:4838)
+        - locked <0x00000006db7d1228> (a com.microsoft.sqlserver.jdbc.TDSReader)
+        at com.microsoft.sqlserver.jdbc.TDSCommand.startResponse(IOBuffer.java:6154)
+        at com.microsoft.sqlserver.jdbc.TDSCommand.startResponse(IOBuffer.java:6106)
+
+"http-apr-8080-exec-254 192.168.224.69 naumen EditObjectAction(uuid=task$123)" daemon prio=6 tid=0x000000004c81c000 nid=0x1dfc runnable [0x0000000067afa000]
+   java.lang.Thread.State: RUNNABLE
+        at java.net.SocketOutputStream.socketWrite0(Native Method)
+        at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:113)
+        at java.net.SocketOutputStream.write(SocketOutputStream.java:159)
+        at com.microsoft.sqlserver.jdbc.TDSChannel.write(IOBuffer.java:1798)
+        at com.microsoft.sqlserver.jdbc.TDSWriter.flush(IOBuffer.java:3581)
+        at com.microsoft.sqlserver.jdbc.TDSWriter.writePacket(IOBuffer.java:3482)
+        at com.microsoft.sqlserver.jdbc.TDSWriter.endMessage(IOBuffer.java:3062)
+        at com.microsoft.sqlserver.jdbc.TDSCommand.startResponse(IOBuffer.java:6120)
+        at com.microsoft.sqlserver.jdbc.TDSCommand.startResponse(IOBuffer.java:6106)
+        at com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement$1PreparedHandleClose.doExecute(SQLServerPreparedStatement.java:138)
+        at com.microsoft.sqlserver.jdbc.TDSCommand.execute(IOBuffer.java:5696)
+</pre>
+				</section>
+
+				<section>
+					<h2>Become better</h2>
+					<h3>In App monitoring</h3>
+					<a href="https://github.com/javamelody/javamelody">javamelody</a>
+					<br/>
+					<br/>
+					<a href="http://newrelic.com/">New Relic</a>
+					<br/>
+					<a href="http://www.appdynamics.com/">App Dynamics</a>
+					<br/>
+					<br/>
+					<a href="https://www.takipi.com/">Takipi</a>
+				</section>
+
+				<section>
+					<h2>Become better</h2>
+					Java Melody
+					<img src="img/java_melody1.png"/>
+				</section>
+
+				<section>
+					<h2>Become better</h2>
+					Java Melody
+					<img src="img/java_melody2.png"/>
+				</section>
+
+				<section>
+					<h2>Become better</h2>
+					Java Melody
+					<img src="img/java_melody3.png"/>
+				</section>
+
+				<section>
+					<h2>Become better</h2>
+					Java Melody
+					<img src="img/java_melody4.png"/>
+				</section>
+
+				<section>
+					<h2>Thanks 4 listening</h2>
+					<img style="vertical-align:middle; border:none" src="img/java_hangs.png" />
+				</section>
+
+				<section>
+					<h2>Let The Utilization<br/>comes with u</h2>
+					<img src="img/utilization.png"/>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+				slideNumber: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
